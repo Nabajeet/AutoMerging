@@ -11,8 +11,6 @@ object test {
                                                   //| [a-z]+[ ]?|[a-z]*[0-9]+[.-]?[0-9]*[a-z]*|apple|air|cellular|imac|ipad|iphone
                                                   //| |ipod|macbook|mini|plus|pro))
   //val brand = uniqueIdMap.get("apple").get("mobiles")
-  val category = uniqueIdMap.get("apple").get.get("mobiles")
-                                                  //> category  : Option[String] = Some([a-z]+[0-9]+[a-z]+[ ]?[a-z]+[ ]?|[a-z]*[0-
-                                                  //| 9]+[.-]?[0-9]*[a-z]*|apple|air|cellular|imac|ipad|iphone|ipod|macbook|mini|p
-                                                  //| lus|pro)
+  val category = uniqueIdMap.get("apple").get.get("camera")
+                                                  //> category  : Option[String] = None
 }

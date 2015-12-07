@@ -98,15 +98,14 @@ object DAO {
     resultsFilteredDF
     //****
   }
-  
 
-  def getPrices(vc_ids: String, sc: SparkContext, sqlContext: SQLContext): String = {
-    val productDF = sqlContext.read.jdbc(url, "pc_prod_detail_test", Array("vc_id in (" + vc_ids + ")"), prop)
-    val priceDF = productDF.select("sell_price")
-    val prodListFiltered = ListBuffer[String]()
-    priceDF.collect().foreach(x => prodListFiltered += x(0).toString)
-    prodListFiltered.mkString(",")
-  }
+  //  def getPrices(vc_ids: String, sc: SparkContext, sqlContext: SQLContext): String = {
+  //    val productDF = sqlContext.read.jdbc(url, "pc_prod_detail_test", Array("vc_id in (" + vc_ids + ")"), prop)
+  //    val priceDF = productDF.select("sell_price")
+  //    val prodListFiltered = ListBuffer[String]()
+  //    priceDF.collect().foreach(x => prodListFiltered += x(0).toString)
+  //    prodListFiltered.mkString(",")
+  //  }
 
   def saveProducts(productsDF: DataFrame, brand: String, sc: SparkContext, sqlContext: SQLContext) {
     productsDF.write.mode("overwrite").jdbc(url, "spark_auto_merge_" + brand, prop)

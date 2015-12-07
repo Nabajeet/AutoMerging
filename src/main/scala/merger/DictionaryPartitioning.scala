@@ -8,6 +8,7 @@ import org.apache.spark.sql.types.{ StructType, StructField, StringType };
 import org.apache.spark.storage._
 import scala.collection.mutable._
 import main.scala.helpers._
+import scala.collection.mutable.ListBuffer
 
 object DictionaryPartitioning {
 
@@ -28,8 +29,6 @@ object DictionaryPartitioning {
     //get colors and brands
     val colors = sc.textFile("color.txt")
     val colorsList = colors.collect().toList
-
-    import scala.collection.mutable.ListBuffer
 
     val arrayRow = rddRow.map(row => {
       val colorAndBrand = ListBuffer[String]()
@@ -60,13 +59,24 @@ object DictionaryPartitioning {
       //convert tokens into a List
       val productNameList = res.distinct
 
-      //pick up probable model no.
-      val regex = RegexAndPatterns.uniqueIdMap(brand).r
+      val uniqueIDTerms: List[String] =
+        if (!row.isNullAt(5)) {
+          RegexAndPatterns.uniqueIdMap(brand).get(row(5).toString) match {
+            case Some(regex) => {
+              //pick up probable model no.
+              val probableIdsList = (res.filter((x => regex.r.pattern.matcher(x).matches)) ++ colorAndBrand).distinct.sorted
 
-      val probableIdsList = (res.filter((x => regex.pattern.matcher(x).matches)) ++ colorAndBrand).distinct.sorted
-
-      //create a unique id using the brand and color and product_no(to be added)
-      val uniqueIDTerms = ((productNameList.intersect(colorsList)) ++ probableIdsList).distinct.sorted
+              //create a unique id using the brand and color and product_no(to be added)
+              ((productNameList.intersect(colorsList)) ++ probableIdsList).distinct.sorted
+            }
+            case None => {
+              if (!row(5).toString.equals("Uncategorized"))
+                List("not_merged_category") ++ List(System.currentTimeMillis.toString())
+              else
+                List("un_categorized_category") ++ List(System.currentTimeMillis.toString())
+            }
+          }
+        } else List("null_category") ++ List(System.currentTimeMillis.toString())
 
       //get terms which are not present in dictionary, not a brand or color
       val nonDictionaryTerms = productNameList.diff(dicWordsList).diff(uniqueIDTerms).sorted
