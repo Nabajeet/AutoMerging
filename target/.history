@@ -1,0 +1,54 @@
+run
+clean
+run
+exit
+package
+run
+package
+run
+help
+about
+settings
+compile
+eun
+run
+testOnly main.scala.TestSpec
+test main.scala.TestSpec
+test-only main.scala.TestSpec
+test
+test-only
+testOnly main.scala.TestSpec
+test-only
+test-only main.scala.TestSpec
+testOnly -- -ex "Testing the test"
+ testOnly com.example.quux.ExampleSpec
+ testOnly main.scala.TestSpec
+testOnly *ExampleSpec
+testOnly main.scala.TestSpec
+test
+test main.scala.TestSpec
+testOnly main.scala.TestSpec
+testOnly *main.scala.TestSpec*
+clean
+compile
+testOnly *main.scala.TestSpec*
+testOnly main.scala.TestSpec
+testOnly src.main.scala.TestSpec
+testOnly main.scala.TestSpec
+clean
+cd ..
+test
+testOnly main.scala.TestSpec
+test-only main.scala.TestSpec
+clean
+test-only main.scala.TestSpec
+RUN
+run
+clean
+compile
+clean
+compile
+test:compile
+test
+test:compile
+test
