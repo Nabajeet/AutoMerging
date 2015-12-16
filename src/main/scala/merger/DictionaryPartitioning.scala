@@ -27,12 +27,11 @@ object DictionaryPartitioning {
     val dicWordsList = dicWordsRDD.collect().toList
 
     //get colors and brands
-    val colors = sc.textFile("color.txt")
+    val colors = sc.textFile("colors/" + brand + "_color.txt")
     val colorsList = colors.collect().toList
 
     val arrayRow = rddRow.map(row => {
-      val colorAndBrand = ListBuffer[String]()
-      colorAndBrand += brand
+      val color = ListBuffer[String]()
 
       if (!row.isNullAt(3)) {
         var colorString = row(3).toString()
@@ -40,9 +39,11 @@ object DictionaryPartitioning {
         colorString.split(RegexAndPatterns.tokenizerMap(brand))
           .foreach(x => {
             if (!(x.equals(" ") || x.equals("")))
-              colorAndBrand += x.toLowerCase
+              color += x.toLowerCase
           })
       }
+
+      val colorAndBrand = color.toList.intersect(colorsList) ++ List(brand)
 
       //tokenize prod name
       val tokens = ListBuffer[String]()
@@ -66,7 +67,7 @@ object DictionaryPartitioning {
               //pick up probable model no.
               val probableIdsList = (res.filter((x => regex.r.pattern.matcher(x).matches)) ++ colorAndBrand).distinct.sorted
 
-              //create a unique id using the brand and color and product_no(to be added)
+              //create a unique id using the brand and color
               ((productNameList.intersect(colorsList)) ++ probableIdsList).distinct.sorted
             }
             case None => {

@@ -1,0 +1,13 @@
+black
+blue
+gold
+green
+grey
+pink
+red
+rose
+silver
+slate
+space
+white
+yellow

@@ -108,7 +108,7 @@ object DAO {
   //  }
 
   def saveProducts(productsDF: DataFrame, brand: String, sc: SparkContext, sqlContext: SQLContext) {
-    productsDF.write.mode("overwrite").jdbc(url, "spark_auto_merge_" + brand, prop)
+    productsDF.write.mode("overwrite").jdbc(url, "spark_auto_merged_" + brand, prop)
   }
 }
 

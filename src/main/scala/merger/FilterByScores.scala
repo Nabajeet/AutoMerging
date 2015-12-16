@@ -70,7 +70,7 @@ object FilterByScores {
         sellPriceListFiltered.mkString(","))
     })
 
-    val filteredResults = rowArray.filter(x => x(1).toString().contains(","))
+    val filteredResults = rowArray.filter(x => { x(1).toString().contains(",") && (!x(4).toString().contains("not_merged_category")) && (!x(4).toString().contains("un_categorized_category")) })
 
     //filteredResults.foreach(x => println("row is " + x))
 
