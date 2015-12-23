@@ -1,0 +1,13 @@
+black
+blue
+ebony
+gold
+grey
+orange
+pink
+platinum
+red
+silver
+titanium
+white
+yellow

@@ -12,12 +12,14 @@ import scala.collection.mutable.ListBuffer
 
 object DictionaryPartitioning {
 
-  def partition(productsDF: DataFrame, brand: String, sc: SparkContext, sqlContext: SQLContext): DataFrame = {
+  def partition(productsDF: DataFrame, brandInfo: String, sc: SparkContext, sqlContext: SQLContext): DataFrame = {
+
+    val brand = brandInfo.split("_").head
 
     //create temporary table
     productsDF.registerTempTable("products")
 
-    val results = sqlContext.sql("SELECT vc_id, prod_name, id_by_merchant, color, size, category_name, sell_price from products")
+    val results = sqlContext.sql("SELECT vc_id, prod_name, id_by_merchant, color, size, category_name, sell_price from products where category_name='Mobiles'")
 
     //convert df to rdd
     val rddRow = results.rdd
@@ -48,7 +50,7 @@ object DictionaryPartitioning {
       //tokenize prod name
       val tokens = ListBuffer[String]()
       var tokenString = row(1).toString()
-      RegexAndPatterns.tokenCleanUpMapOfMap(brand).foreach { x => (tokenString = tokenString.replaceAll(x._1, x._2)) }
+      RegexAndPatterns.tokenCleanUpMapOfMap(brandInfo).foreach { x => (tokenString = tokenString.replaceAll(x._1, x._2)) }
       tokenString.split(RegexAndPatterns.tokenizerMap(brand))
         .foreach(x => {
           if (!(x.equals(" ") || x.equals("")))
@@ -80,7 +82,7 @@ object DictionaryPartitioning {
         } else List("null_category") ++ List(System.currentTimeMillis.toString())
 
       //get terms which are not present in dictionary, not a brand or color
-      val nonDictionaryTerms = productNameList.diff(dicWordsList).diff(uniqueIDTerms).sorted
+      val nonDictionaryTerms = productNameList.diff(dicWordsList).diff(uniqueIDTerms).filter(!_.equals("-")).sorted
 
       //get terms which are in dictionary, not a brand or color 
       val dictionaryTerms = productNameList.intersect(dicWordsList).diff(uniqueIDTerms).sorted
@@ -93,10 +95,8 @@ object DictionaryPartitioning {
         if (!row.isNullAt(5)) row(5).toString() else "uncategorized",
         row(6).toString(),
         if (nonDictionaryTerms.isEmpty) "null"
-        else if (nonDictionaryTerms.length == 1 && nonDictionaryTerms.head.equals("-")) "null"
         else nonDictionaryTerms.toList.mkString("|"),
         if (dictionaryTerms.isEmpty) "null"
-        else if (dictionaryTerms.length == 1 && dictionaryTerms.head.equals("-")) "null"
         else dictionaryTerms.toList.mkString("|"),
         if (!uniqueIDTerms.isEmpty) uniqueIDTerms.toList.mkString("|") else "null")
     })

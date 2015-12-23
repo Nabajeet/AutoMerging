@@ -13,4 +13,10 @@ object test {
   //val brand = uniqueIdMap.get("apple").get("mobiles")
   val category = uniqueIdMap.get("apple").get.get("camera")
                                                   //> category  : Option[String] = None
+  val brandInfo="samsung"                         //> brandInfo  : String = samsung
+  val brand=brandInfo.split("_").head             //> brand  : String = samsung
+  val cat=brandInfo.split("_").last               //> cat  : String = samsung
+  
+  val list=List("1","2","_")                      //> list  : List[String] = List(1, 2, _)
+	list.filter { x => !x.equals("_") }       //> res0: List[String] = List(1, 2)
 }

@@ -18,7 +18,8 @@ object AutoMerge {
   val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 
   //set brand
-  val brand = "apple"
+  val brandInfo = "asus"
+  val brand = brandInfo.split("_").head
 
   val alpha = 0.50 //strength of unique id
   val beta = 0.30 //strength of non-dictionary terms 
@@ -28,20 +29,20 @@ object AutoMerge {
   val priceThreshold = 0.4 //threshold for filtering based on price
 
   def main(args: Array[String]) {
-    val productsDF = DAO.getProducts(brand, sc, sqlContext)
-    //DAO.saveProducts(productsDF, brand + "_products", sc, sqlContext)
+    val productsDF = DAO.getProducts(brandInfo, sc, sqlContext)
+    DAO.saveProducts(productsDF, brand + "_products", sc, sqlContext)
 
-    val dictionaryPartitionedDF = DictionaryPartitioning.partition(productsDF, brand, sc, sqlContext)
-    //DAO.saveProducts(dictionaryPartitionedDF, brand + "_dict_partitioned", sc, sqlContext)
+    val dictionaryPartitionedDF = DictionaryPartitioning.partition(productsDF, brandInfo, sc, sqlContext)
+    DAO.saveProducts(dictionaryPartitionedDF, brand + "_dict_partitioned", sc, sqlContext)
 
     val reducedDF = ReduceByUniqueID.reduce(dictionaryPartitionedDF, sc, sqlContext)
-    //DAO.saveProducts(reducedDF, brand + "_reduced", sc, sqlContext)
+    DAO.saveProducts(reducedDF, brand + "_reduced", sc, sqlContext)
 
     val scoredDF = CalculateScores.calculate(reducedDF, alpha, beta, gamma, sc, sqlContext)
-    //DAO.saveProducts(scoredDF, brand + "_scored", sc, sqlContext)
+    DAO.saveProducts(scoredDF, brand + "_scored", sc, sqlContext)
 
     val scoreFilteredDF = FilterByScores.filter(scoredDF, sc, sqlContext, scoreThreshold)
-    //DAO.saveProducts(scoreFilteredDF, brand + "_scoreFiltered", sc, sqlContext)
+    DAO.saveProducts(scoreFilteredDF, brand + "_scoreFiltered", sc, sqlContext)
 
     val priceFilteredDF = FilterByPrices.filter(scoreFilteredDF, sc, sqlContext, priceThreshold)
     DAO.saveProducts(priceFilteredDF, brand, sc, sqlContext)

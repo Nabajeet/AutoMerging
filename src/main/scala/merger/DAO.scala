@@ -16,7 +16,10 @@ object DAO {
   prop.setProperty("password", "tdp_passwd")
   val url = "jdbc:mysql://localhost:3306/merge_test"
 
-  def getProducts(brand: String, sc: SparkContext, sqlContext: SQLContext): DataFrame = {
+  def getProducts(brandInfo: String, sc: SparkContext, sqlContext: SQLContext): DataFrame = {
+
+    val brand = brandInfo.split("_").head
+
     //get data from products table
     val productsDF = sqlContext.read.jdbc(url, "pc_products_test", //pc_products_test
       Array("brand='" + brand + "'"), prop)

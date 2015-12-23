@@ -1,0 +1,14 @@
+black
+blue
+brown
+champagne
+coffee
+gold
+green
+grey
+orange
+pink
+red
+silver
+white
+yellow
