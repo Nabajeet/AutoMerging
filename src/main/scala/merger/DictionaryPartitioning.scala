@@ -19,7 +19,7 @@ object DictionaryPartitioning {
     //create temporary table
     productsDF.registerTempTable("products")
 
-    val results = sqlContext.sql("SELECT vc_id, prod_name, id_by_merchant, color, size, category_name, sell_price from products where category_name='Mobiles'")
+    val results = sqlContext.sql("SELECT vc_id, prod_name, id_by_merchant, color, size, category_name, sell_price from products")
 
     //convert df to rdd
     val rddRow = results.rdd

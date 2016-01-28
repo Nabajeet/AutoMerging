@@ -18,7 +18,7 @@ object AutoMerge {
   val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 
   //set brand
-  val brandInfo = "asus"
+  val brandInfo = "apple"
   val brand = brandInfo.split("_").head
 
   val alpha = 0.50 //strength of unique id
